@@ -1,0 +1,16 @@
+using System.Web.Http;
+using GithubStatistics.Services;
+
+namespace GithubStatistics
+{
+    public class WebApiApplication : System.Web.HttpApplication
+    {
+        protected void Application_Start()
+        {
+            GlobalConfiguration.Configure(WebApiConfig.Register);
+            GithubClientHelper
+                .InitializeClient(); // TOdo replace with factory https://docs.microsoft.com/en-us/aspnet/core/fundamentals/http-requests?view=aspnetcore-2.2#consumption-patterns
+
+        }
+    }
+}
