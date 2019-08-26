@@ -1,16 +1,21 @@
 ﻿using Newtonsoft.Json;
 using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace WebApplication1.Models
 {
     public class GithubProject
     {
-        public int Id { get; set; }
+       // public int Id { get; set; }
+
+        [Key]
+        [Required]
         public string Name { get; set; }
 
+        [JsonProperty("html_url")]
         public string Url { get; set; }
 
-        public bool Fork { get; set; }
+        public bool Fork { get; set; } //is it a forked Project or own Project
 
         [JsonProperty("created_at")] public DateTime CreatedAt { get; set; }
 
@@ -25,9 +30,6 @@ namespace WebApplication1.Models
         [JsonProperty("forks_count")] public int ForkCount { get; set; }
 
 
-        public override string ToString()
-        {
-            return $"{nameof(Id)}: {Id}, {nameof(Name)}: {Name}, {nameof(Url)}: {Url}, {nameof(Fork)}: {Fork}, {nameof(CreatedAt)}: {CreatedAt}, {nameof(UpdatedAt)}: {UpdatedAt}, {nameof(Description)}: {Description}, {nameof(StargazersCount)}: {StargazersCount}, {nameof(Language)}: {Language}, {nameof(ForkCount)}: {ForkCount}";
-        }
+       
     }
 }

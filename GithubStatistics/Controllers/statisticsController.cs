@@ -1,43 +1,79 @@
 ﻿using System.Collections.Generic;
+using System.Data.Entity;
 using System.Threading.Tasks;
 using System.Web.Http;
+using GithubStatistics.Models;
 using GithubStatistics.Services;
+using GithubStatistics.Services.DataService;
 using WebApplication1.Models;
 
 namespace GithubStatistics.Controllers
 {
-
     public class ValuesController : ApiController
     {
-        private readonly GithubRepoProcessor _githubRepoProcessor = new GithubRepoProcessor(); //TODO make request automated
+        private readonly GithubApiRepoProcessor
+            _githubApiRepoProcessor =
+                new GithubApiRepoProcessor(); //TODO make request automated //TODO Dependency injection
 
+        private readonly GithubDataService _githubDataService = new GithubDataService();
+
+//        public ValuesController(GithubApiRepoProcessor githubApiRepoProcessor)
+//        {
+//            this._githubApiRepoProcessor = githubApiRepoProcessor;
+//        }
+        //private readonly GithubDbContext _context = new GithubDbContext();
         // GET api/values
-        public async Task<List<GithubProject>> Get()
+        public async Task<List<GithubProject>> Get() //gets info to projects always needed
         {
+            List<GithubProject> githubProjects = await _githubApiRepoProcessor.GetGithubRepoInfo("jdevdain");
+            _githubDataService.SaveGithubProjects(githubProjects);
 
-            return await _githubRepoProcessor.GetGithubRepoInfo("jdevdain");
-
-
+            return githubProjects;
         }
 
         // GET api/values/5
-        public async Task<Dictionary<string, GithubProjectView>> Get(int id)
+        public async Task<List<GithubProjectView>> Get(int id) //updated whole GithubProjectViews Table, only needed if there is a new project
         {
+            List<GithubProject> githubProjects = await _githubApiRepoProcessor.GetGithubRepoInfo("jdevdain");
+            List<GithubProjectView> githubProjectViews =
+                await _githubApiRepoProcessor.GetGithubRepoViews(githubProjects); //replace with database access TODO
 
-            List<GithubProject> githubProjects = await _githubRepoProcessor.GetGithubRepoInfo("jdevdain");
+            _githubDataService.SaveGithubProjectViews(githubProjectViews);
 
-            return await _githubRepoProcessor.GetGithubRepoViews(githubProjects);
-
+            return githubProjectViews;
         }
+
+        [HttpGet]
+        [Route("ViewNames")]
+        public List<string> GetGithubProjectViewsNames()
+        {
+            return _githubDataService.GetGithubProjectViewsNames();
+        }
+
+        [HttpGet]
+        [Route("Views")]
+        public async Task<List<View>> GetGithubProjectViews()
+        {
+            List<GithubProject> githubProjects = await _githubApiRepoProcessor.GetGithubRepoInfo("jdevdain"); //Replace with database access TODO
+            List<GithubProjectView> githubProjectViews =
+                await _githubApiRepoProcessor.GetGithubRepoViews(githubProjects); //Replace with database access TODO
+            foreach (GithubProjectView githubProjectView in githubProjectViews)
+            {
+                githubProjectView.Views.Add();
+            }
+            return
+        }
+
+
 
         // POST api/values
         ///
-        public void Post([FromBody]string value)
+        public void Post([FromBody] string value)
         {
         }
 
         // PUT api/values/5
-        public void Put(int id, [FromBody]string value)
+        public void Put(int id, [FromBody] string value)
         {
         }
 

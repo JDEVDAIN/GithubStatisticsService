@@ -1,11 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
+using GithubStatistics.Models;
 using WebApplication1.Models;
 
 namespace GithubStatistics.Services
 {
-    public class GithubRepoProcessor
+    public class GithubApiRepoProcessor
     {
         public async Task<List<GithubProject>> GetGithubRepoInfo(string user = "jdevdain")
         {
@@ -13,7 +14,7 @@ namespace GithubStatistics.Services
 
 
             HttpResponseMessage response =
-                await GithubClientHelper.githubClient.GetAsync($"https://api.github.com/users/{user}/repos");
+                await GithubApiClientHelper.GithubClient.GetAsync($"https://api.github.com/users/{user}/repos");
             List<GithubProject> githubProjects = null;
             if (response.IsSuccessStatusCode)
             {
@@ -29,22 +30,30 @@ namespace GithubStatistics.Services
         }
 
 
-        public async Task<Dictionary<string, GithubProjectView>> GetGithubRepoViews(List<GithubProject> githubProjects)
+        public async Task<List<GithubProjectView>> GetGithubRepoViews(List<GithubProject> githubProjects)
         {
-            Dictionary<string, GithubProjectView> githubProjectViews = new Dictionary<string, GithubProjectView>();
-
+            //Dictionary<string, GithubProjectView> githubProjectViews = new Dictionary<string, GithubProjectView>();
+            List<GithubProjectView> githubProjectViews = new List<GithubProjectView>();
             for (int i = 0; i < githubProjects.Count - 1; i++)
             {
                 HttpResponseMessage response =
-                    await GithubClientHelper.githubClient.GetAsync(
+                    await GithubApiClientHelper.GithubClient.GetAsync(
                         $"https://api.github.com/repos/jdevdain/{githubProjects[i].Name}/traffic/views");
                 System.Diagnostics.Debug.WriteLine(githubProjects[i].Name);
 
                 if (response.IsSuccessStatusCode)
                 {
                     System.Diagnostics.Debug.WriteLine(response.Content);
-                    githubProjectViews.Add(githubProjects[i].Name,
-                        await response.Content.ReadAsAsync<GithubProjectView>());
+//                    githubProjectViews.Add(githubProjects[i].Name,
+//                        await response.Content.ReadAsAsync<GithubProjectView>());
+//                    GithubProjectView githubProjectView = new GithubProjectView()
+//                    {
+//                        Name=githubProjects[i].Name
+//
+//                    };
+                    GithubProjectView githubProjectView = await response.Content.ReadAsAsync<GithubProjectView>();
+                    githubProjectView.Name = githubProjects[i].Name;
+                    githubProjectViews.Add(githubProjectView);
                 }
                 else
                 {
@@ -56,4 +65,6 @@ namespace GithubStatistics.Services
             return githubProjectViews;
         }
     }
+
+   
 }
