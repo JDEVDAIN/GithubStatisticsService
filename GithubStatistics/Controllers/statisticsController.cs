@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Http.Results;
+using GithubStatistics.Models;
 using WebApplication1.Models;
 
 namespace GithubStatistics.Controllers

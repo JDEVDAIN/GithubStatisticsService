@@ -1,9 +1,7 @@
-﻿using System;
-using GithubStatistics.Models;
+﻿using GithubStatistics.Models;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Data.Entity.Migrations;
-using System.Diagnostics;
 using System.Linq;
 using WebApplication1.Models;
 
@@ -108,34 +106,34 @@ namespace GithubStatistics.Services.DataService
             System.Diagnostics.Debug.WriteLine("Test");
             foreach (var githubProjectView in githubProjectViews)
             {
-                List<View> viewList = new List<View>();
+                List<View> uniqueViewList = new List<View>();
                 bool first = true;
-                var test = githubProjectView.Views;
-                foreach (View view in new List<View>(githubProjectView.Views)
+               
+                foreach (View datebaseView in new List<View>(githubProjectView.Views)
                 ) //workaround needed else it will reference the original databaselist and if something gets deleted it will remove it from the list and make it impossible to run
                 {
                     if (first)
                     {
-                        viewList.Add(view);
+                        uniqueViewList.Add(datebaseView);
                         first = false;
                     }
                     else
                     {
-                        foreach (View view1 in new List<View>(viewList)
+                        foreach (View uniqueView in new List<View>(uniqueViewList)
                         ) //workaround needed else it will reference the original databaselist and if something gets deleted it will remove it from the list and make it impossible to run
                         {
-                            if (view1.Timestamp.CompareTo(view.Timestamp) != 0) //not a duplicate
+                            if (uniqueView.Timestamp.CompareTo(datebaseView.Timestamp) != 0) //not a duplicate
                             {
-                                viewList.Add(view);
+                                uniqueViewList.Add(datebaseView);
                             }
                             else
                             {
-                                _context.Entry(view).State = EntityState.Deleted;
+                                _context.Entry(datebaseView).State = EntityState.Deleted;
                             }
                         }
                     }
 
-                    System.Diagnostics.Debug.WriteLine(viewList.ToString());
+                    System.Diagnostics.Debug.WriteLine(uniqueViewList.ToString());
                     System.Diagnostics.Debug.WriteLine("\n");
                 }
             }

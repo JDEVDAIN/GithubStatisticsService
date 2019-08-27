@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
+using GithubStatistics.Models;
 using WebApplication1.Models;
 
 namespace GithubStatistics.Services
