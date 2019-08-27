@@ -250,13 +250,9 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201908271200293_github.cs" />
-    <Compile Include="Migrations\201908271200293_github.Designer.cs">
-      <DependentUpon>201908271200293_github.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201908271202331_github1.cs" />
-    <Compile Include="Migrations\201908271202331_github1.Designer.cs">
-      <DependentUpon>201908271202331_github1.cs</DependentUpon>
+    <Compile Include="Migrations\201908272054561_Github.cs" />
+    <Compile Include="Migrations\201908272054561_Github.Designer.cs">
+      <DependentUpon>201908272054561_Github.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\GithubProject.cs" />
@@ -284,11 +280,8 @@
     <Folder Include="App_Data\" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\201908271200293_github.resx">
-      <DependentUpon>201908271200293_github.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201908271202331_github1.resx">
-      <DependentUpon>201908271202331_github1.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201908272054561_Github.resx">
+      <DependentUpon>201908272054561_Github.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

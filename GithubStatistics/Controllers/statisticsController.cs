@@ -86,10 +86,10 @@ namespace GithubStatistics.Controllers
         }
 
         [HttpGet]
-        [Route("total")]
-        public async Task<OkResult> getTotalViews()
+        [Route("removeDuplicates")]
+        public async Task<OkResult> RemoveDuplicatesInViews()
         {
-            _githubDataService.CalculateTotalViews();
+            _githubDataService.RemoveDuplicatesInViews();
 
             return Ok();
         }

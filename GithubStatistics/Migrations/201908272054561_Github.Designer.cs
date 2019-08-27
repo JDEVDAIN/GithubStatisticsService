@@ -7,13 +7,13 @@ namespace GithubStatistics.Migrations
     using System.Resources;
     
     [GeneratedCode("EntityFramework.Migrations", "6.2.0-61023")]
-    public sealed partial class github : IMigrationMetadata
+    public sealed partial class Github : IMigrationMetadata
     {
-        private readonly ResourceManager Resources = new ResourceManager(typeof(github));
+        private readonly ResourceManager Resources = new ResourceManager(typeof(Github));
         
         string IMigrationMetadata.Id
         {
-            get { return "201908271200293_github"; }
+            get { return "201908272054561_Github"; }
         }
         
         string IMigrationMetadata.Source

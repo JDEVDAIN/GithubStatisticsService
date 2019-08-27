@@ -1,14 +1,15 @@
-﻿using GithubStatistics.Models;
+﻿using System;
+using GithubStatistics.Models;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Data.Entity.Migrations;
+using System.Diagnostics;
 using System.Linq;
 using WebApplication1.Models;
 
 
 namespace GithubStatistics.Services.DataService
 {
-
     public class GithubDataService
     {
         private readonly GithubDbContext _context = new GithubDbContext();
@@ -42,8 +43,8 @@ namespace GithubStatistics.Services.DataService
             {
                 //log already exists TODO
             }
-            //todo make sure it doesnt already exist else exception, maybe make catch exception or check first
 
+            //todo make sure it doesnt already exist else exception, maybe make catch exception or check first
         }
 
         public void SaveGithubProjectViews(List<GithubProjectView> githubProjectViews)
@@ -60,8 +61,8 @@ namespace GithubStatistics.Services.DataService
                     //TODO log
                 }
             }
-            _context.SaveChangesAsync();
 
+            _context.SaveChangesAsync();
         }
 
         public void SaveOrUpdateGithubProjectView(GithubProjectView githubProjectView)
@@ -73,7 +74,8 @@ namespace GithubStatistics.Services.DataService
         public List<string> GetGithubProjectViewsNames()
         {
             List<string> githubProjectViewsNameList;
-            githubProjectViewsNameList = _context.GithubProjectViews.Select(p => p.Name).ToList(); //Linq expression to get all names 
+            githubProjectViewsNameList =
+                _context.GithubProjectViews.Select(p => p.Name).ToList(); //Linq expression to get all names 
 
 
             return githubProjectViewsNameList;
@@ -81,7 +83,8 @@ namespace GithubStatistics.Services.DataService
 
         public void SaveViews(List<GithubProjectView> githubProjectViews)
         {
-            List<GithubProjectView> databaseGithubProjectViews = _context.GithubProjectViews.Include(d => d.Views).ToList();
+            List<GithubProjectView> databaseGithubProjectViews =
+                _context.GithubProjectViews.Include(d => d.Views).ToList();
             foreach (var databaseGithubProjectView in databaseGithubProjectViews)
             {
                 int index = githubProjectViews.IndexOf(githubProjectViews.Find(x =>
@@ -95,23 +98,49 @@ namespace GithubStatistics.Services.DataService
             _context.SaveChangesAsync();
         }
 
-        public void CalculateTotalViews()
+        public void RemoveDuplicatesInViews() //TODO improve
         {
             //get all views
             //if views have same GithubProjectView_Name (Query with Name?)
             //check for timestamp if its the same remove
             //if timestamp is not the same add the counts and uniques together and write to total in Githubprojectview
             List<GithubProjectView> githubProjectViews = _context.GithubProjectViews.Include(d => d.Views).ToList();
+            System.Diagnostics.Debug.WriteLine("Test");
             foreach (var githubProjectView in githubProjectViews)
             {
-                System.Diagnostics.Debug.WriteLine(githubProjectView.Views.ToString());
+                List<View> viewList = new List<View>();
+                bool first = true;
+                var test = githubProjectView.Views;
+                foreach (View view in new List<View>(githubProjectView.Views)
+                ) //workaround needed else it will reference the original databaselist and if something gets deleted it will remove it from the list and make it impossible to run
+                {
+                    if (first)
+                    {
+                        viewList.Add(view);
+                        first = false;
+                    }
+                    else
+                    {
+                        foreach (View view1 in new List<View>(viewList)
+                        ) //workaround needed else it will reference the original databaselist and if something gets deleted it will remove it from the list and make it impossible to run
+                        {
+                            if (view1.Timestamp.CompareTo(view.Timestamp) != 0) //not a duplicate
+                            {
+                                viewList.Add(view);
+                            }
+                            else
+                            {
+                                _context.Entry(view).State = EntityState.Deleted;
+                            }
+                        }
+                    }
+
+                    System.Diagnostics.Debug.WriteLine(viewList.ToString());
+                    System.Diagnostics.Debug.WriteLine("\n");
+                }
             }
 
+            _context.SaveChangesAsync();
         }
-
-
-
-
-
     }
 }
