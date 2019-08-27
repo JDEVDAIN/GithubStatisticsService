@@ -45,6 +45,7 @@ namespace GithubStatistics.Migrations
                         timestamp = c.DateTime(nullable: false, precision: 0),
                         count = c.Int(nullable: false),
                         uniques = c.Int(nullable: false),
+                        ViewName = c.String(unicode: false),
                         GithubProjectView_Name = c.String(maxLength: 128, storeType: "nvarchar"),
                     })
                 .PrimaryKey(t => t.Id)

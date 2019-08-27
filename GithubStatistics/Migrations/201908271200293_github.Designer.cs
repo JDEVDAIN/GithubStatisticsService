@@ -13,7 +13,7 @@ namespace GithubStatistics.Migrations
         
         string IMigrationMetadata.Id
         {
-            get { return "201908261009326_github"; }
+            get { return "201908271200293_github"; }
         }
         
         string IMigrationMetadata.Source

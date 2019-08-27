@@ -1,8 +1,11 @@
 ﻿using System.Collections.Generic;
+using System.Data.Entity;
 using System.Data.Entity.Migrations;
 using System.Linq;
 using GithubStatistics.Models;
+using Microsoft.Extensions.Logging;
 using WebApplication1.Models;
+
 
 namespace GithubStatistics.Services.DataService
 {
@@ -10,6 +13,7 @@ namespace GithubStatistics.Services.DataService
     public class GithubDataService
     {
         private readonly GithubDbContext _context = new GithubDbContext();
+        
 
         public void SaveGithubProject(GithubProject githubProject)
         {
@@ -76,9 +80,21 @@ namespace GithubStatistics.Services.DataService
             return githubProjectViewsNameList;
         }
 
-        public void SaveView(GithubProjectView githubProjectView)
+        public void SaveViews(List<GithubProjectView> githubProjectViews)
         {
-            _context.Entry(View).
+            List<GithubProjectView> databaseGithubProjectViews = _context.GithubProjectViews.Include(d => d.Views).ToList();
+            foreach (var databaseGithubProjectView in databaseGithubProjectViews)
+            {
+               int index = githubProjectViews.IndexOf(githubProjectViews.Find(x =>
+                   x.Name.Equals(databaseGithubProjectView.Name)));
+               foreach (View view in githubProjectViews[index].Views)
+               {
+                   databaseGithubProjectView.Views.Add(view);
+               }
+            }
+
+            _context.SaveChangesAsync();
+
 
         }
 

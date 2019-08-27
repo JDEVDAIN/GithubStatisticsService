@@ -20,4 +20,5 @@ namespace GithubStatistics.Migrations
             //  to avoid creating duplicate seed data.
         }
     }
+    //TODO on modelcreation
 }

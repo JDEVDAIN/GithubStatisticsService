@@ -10,9 +10,9 @@ namespace WebApplication1.Models
     {
         [Key]
         public string Name { get; set; }
-        public int count { get; set; }
+        public int count { get; set; } //useless
 
-        public int uniques { get; set; }
+        public int uniques { get; set; } //useless 
 
         public ICollection<View> Views { get; set; }
 
@@ -37,6 +37,10 @@ namespace WebApplication1.Models
         public DateTime timestamp { get; set; }
         public int count { get; set; }
         public int uniques { get; set; }
+
+       // public string ViewName { get; set; } //needed? todo
+
+        public virtual GithubProjectView GithubProjectView { get; set; }
     }
 
 
