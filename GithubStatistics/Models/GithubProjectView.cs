@@ -10,9 +10,9 @@ namespace WebApplication1.Models
     {
         [Key]
         public string Name { get; set; }
-        public int count { get; set; } //useless
+        public int Count { get; set; } //useless
 
-        public int uniques { get; set; } //useless 
+        public int Uniques { get; set; } //useless 
 
         public ICollection<View> Views { get; set; }
 
@@ -25,22 +25,27 @@ namespace WebApplication1.Models
 
         public override string ToString()
         {
-            return $"{nameof(Name)}: {Name}, {nameof(count)}: {count}, {nameof(uniques)}: {uniques}, {nameof(Views)}: {Views.ToString()}, {nameof(GithubProject)}: {GithubProject}";
+            return $"{nameof(Name)}: {Name}, {nameof(Count)}: {Count}, {nameof(Uniques)}: {Uniques}, {nameof(Views)}: {Views.ToString()}, {nameof(GithubProject)}: {GithubProject}";
         }
     }
 
-    public class View 
+    public class View
     {
         [Key]
         public int Id { get; set; }
-        
-        public DateTime timestamp { get; set; }
-        public int count { get; set; }
-        public int uniques { get; set; }
 
-       // public string ViewName { get; set; } //needed? todo
+        public DateTime Timestamp { get; set; }
+        public int Count { get; set; }
+        public int Uniques { get; set; }
+
+        // public string ViewName { get; set; } //needed? todo
 
         public virtual GithubProjectView GithubProjectView { get; set; }
+
+        public override string ToString()
+        {
+            return $"{nameof(Id)}: {Id}, {nameof(Timestamp)}: {Timestamp}, {nameof(Count)}: {Count}, {nameof(Uniques)}: {Uniques}, {nameof(GithubProjectView)}: {GithubProjectView}";
+        }
     }
 
 

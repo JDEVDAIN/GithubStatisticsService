@@ -6,7 +6,7 @@ namespace WebApplication1.Models
 {
     public class GithubProject
     {
-       // public int Id { get; set; }
+        // public int Id { get; set; }
 
         [Key]
         [Required]
@@ -30,6 +30,6 @@ namespace WebApplication1.Models
         [JsonProperty("forks_count")] public int ForkCount { get; set; }
 
 
-       
+
     }
 }

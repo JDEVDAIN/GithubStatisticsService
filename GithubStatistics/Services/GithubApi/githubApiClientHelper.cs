@@ -4,10 +4,10 @@ using System.Net.Http.Headers;
 
 namespace GithubStatistics.Services
 {
-//    public interface IApiClientHelper
-//    {
-//        void InitializeClient();
-//    }
+    //    public interface IApiClientHelper
+    //    {
+    //        void InitializeClient();
+    //    }
 
     public class GithubApiClientHelper//: IApiClientHelper //TODO make singleton or use factory see Global.asax.cs
     {

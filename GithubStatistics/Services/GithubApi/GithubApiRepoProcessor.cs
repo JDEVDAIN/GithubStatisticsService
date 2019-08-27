@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
-using GithubStatistics.Models;
 using WebApplication1.Models;
 
 namespace GithubStatistics.Services
@@ -44,13 +43,13 @@ namespace GithubStatistics.Services
                 if (response.IsSuccessStatusCode)
                 {
                     System.Diagnostics.Debug.WriteLine(response.Content);
-//                    githubProjectViews.Add(githubProjects[i].Name,
-//                        await response.Content.ReadAsAsync<GithubProjectView>());
-//                    GithubProjectView githubProjectView = new GithubProjectView()
-//                    {
-//                        Name=githubProjects[i].Name
-//
-//                    };
+                    //                    githubProjectViews.Add(githubProjects[i].Name,
+                    //                        await response.Content.ReadAsAsync<GithubProjectView>());
+                    //                    GithubProjectView githubProjectView = new GithubProjectView()
+                    //                    {
+                    //                        Name=githubProjects[i].Name
+                    //
+                    //                    };
                     GithubProjectView githubProjectView = await response.Content.ReadAsAsync<GithubProjectView>();
                     githubProjectView.Name = githubProjects[i].Name;
                     githubProjectViews.Add(githubProjectView);
@@ -66,5 +65,5 @@ namespace GithubStatistics.Services
         }
     }
 
-   
+
 }

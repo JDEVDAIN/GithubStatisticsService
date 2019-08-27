@@ -1,5 +1,5 @@
-using System.Web.Http;
 using GithubStatistics.Services;
+using System.Web.Http;
 
 namespace GithubStatistics
 {

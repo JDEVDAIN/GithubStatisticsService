@@ -1,11 +1,10 @@
-﻿using System.Collections.Generic;
-using System.Data.Entity;
+﻿using GithubStatistics.Services;
+using GithubStatistics.Services.DataService;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Http;
-using GithubStatistics.Models;
-using GithubStatistics.Services;
-using GithubStatistics.Services.DataService;
+using System.Web.Http.Results;
 using WebApplication1.Models;
 
 namespace GithubStatistics.Controllers
@@ -18,10 +17,10 @@ namespace GithubStatistics.Controllers
 
         private readonly GithubDataService _githubDataService = new GithubDataService();
 
-//        public ValuesController(GithubApiRepoProcessor githubApiRepoProcessor)
-//        {
-//            this._githubApiRepoProcessor = githubApiRepoProcessor;
-//        }
+        //        public ValuesController(GithubApiRepoProcessor githubApiRepoProcessor)
+        //        {
+        //            this._githubApiRepoProcessor = githubApiRepoProcessor;
+        //        }
         //private readonly GithubDbContext _context = new GithubDbContext();
         // GET api/values
         public async Task<List<GithubProject>> Get() //gets info to projects always needed
@@ -80,26 +79,21 @@ namespace GithubStatistics.Controllers
                     await _githubApiRepoProcessor.GetGithubRepoInfo("jdevdain"); //Replace with database access TODO
             List<GithubProjectView> githubProjectViews =
                 await _githubApiRepoProcessor.GetGithubRepoViews(githubProjects); //Replace with database access TODO
-             _githubDataService.SaveViews(githubProjectViews);
+            _githubDataService.SaveViews(githubProjectViews);
 
             //_githubDataService.SaveViews(githubProjectViews);
             return githubProjectViews;
         }
 
-        // POST api/values
-        ///
-        public void Post([FromBody] string value)
+        [HttpGet]
+        [Route("total")]
+        public async Task<OkResult> getTotalViews()
         {
+            _githubDataService.CalculateTotalViews();
+
+            return Ok();
         }
 
-        // PUT api/values/5
-        public void Put(int id, [FromBody] string value)
-        {
-        }
 
-        // DELETE api/values/5
-        public void Delete(int id)
-        {
-        }
     }
 }

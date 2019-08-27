@@ -1,15 +1,9 @@
-using System.Collections;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 using MySql.Data.Entity;
 using WebApplication1.Models;
 
 namespace GithubStatistics.Models
 {
-    using System;
     using System.Data.Entity;
-    using System.Linq;
 
     [DbConfigurationType(typeof(MySqlEFConfiguration))]
     public class GithubDbContext : DbContext
