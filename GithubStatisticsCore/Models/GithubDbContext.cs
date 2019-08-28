@@ -2,7 +2,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace GithubStatisticsCore.Models
 {
-    
+
 
     //[DbConfigurationType(typeof(MySqlEFConfiguration))]
     public class GithubDbContext : DbContext

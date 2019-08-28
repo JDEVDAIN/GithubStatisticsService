@@ -108,7 +108,7 @@ namespace GithubStatistics.Services.DataService
             {
                 List<View> uniqueViewList = new List<View>();
                 bool first = true;
-               
+
                 foreach (View datebaseView in new List<View>(githubProjectView.Views)
                 ) //workaround needed else it will reference the original databaselist and if something gets deleted it will remove it from the list and make it impossible to run
                 {

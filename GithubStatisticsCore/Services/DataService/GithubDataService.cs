@@ -1,15 +1,31 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using GithubStatisticsCore.Models;
+﻿using GithubStatisticsCore.Models;
 using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace GithubStatisticsCore.Services.DataService
 {
     public interface IGithubDataService
     {
+        void SaveGithubProject(GithubProject githubProject);
 
+        void SaveGithubProjects(List<GithubProject> githubProjects);
+
+        void SaveGithubProjectView(GithubProjectView githubProjectView);
+
+        void SaveGithubProjectViews(List<GithubProjectView> githubProjectViews);
+
+        void SaveOrUpdateGithubProjectView(GithubProjectView githubProjectView);
+
+        List<string> GetGithubProjectViewsNames();
+        void SaveViews(List<GithubProjectView> githubProjectViews);
+
+        void RemoveDuplicatesInViews();
+
+        void RemoveDuplicatesInViewsAndUpdateTotal();
     }
-    public class GithubDataService:IGithubDataService
+
+    public class GithubDataService : IGithubDataService
     {
         private readonly GithubDbContext _context;
 
@@ -21,7 +37,6 @@ namespace GithubStatisticsCore.Services.DataService
 
         public void SaveGithubProject(GithubProject githubProject)
         {
-
             _context.GithubProjects.Add(githubProject);
             _context.SaveChangesAsync();
         }
@@ -53,7 +68,8 @@ namespace GithubStatisticsCore.Services.DataService
         }
 
         public void SaveGithubProjectViews(List<GithubProjectView> githubProjectViews)
-        {//also saves githubprojects?
+        {
+            //also saves githubprojects?
             List<string> githubProjectViewsNames = GetGithubProjectViewsNames();
             foreach (GithubProjectView githubProjectView in githubProjectViews)
             {
@@ -147,7 +163,6 @@ namespace GithubStatisticsCore.Services.DataService
             }
 
             _context.SaveChangesAsync();
-
         }
 
         public void RemoveDuplicatesInViewsAndUpdateTotal() //TODO improve
@@ -191,6 +206,7 @@ namespace GithubStatisticsCore.Services.DataService
                     System.Diagnostics.Debug.WriteLine(uniqueViewList.ToString());
                     System.Diagnostics.Debug.WriteLine("\n");
                 }
+
                 //calculate total
                 int totalViews = 0;
                 int totalUniques = 0;
@@ -203,11 +219,9 @@ namespace GithubStatisticsCore.Services.DataService
                 githubProjectView.TotalCount = totalViews;
                 githubProjectView.TotalUniques = totalUniques;
                 //_context.Entry(githubProjectView).State = EntityState.Modified;
-
             }
 
             _context.SaveChangesAsync();
-
         }
     }
 }

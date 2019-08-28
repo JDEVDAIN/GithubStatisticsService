@@ -1,6 +1,4 @@
-﻿using System;
-using System.Net.Http.Headers;
-using GithubStatisticsCore.Models;
+﻿using GithubStatisticsCore.Models;
 using GithubStatisticsCore.Services.GithubApi;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -8,6 +6,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using System;
+using System.Net.Http.Headers;
 
 namespace GithubStatisticsCore
 {
@@ -57,8 +57,8 @@ namespace GithubStatisticsCore
             app.UseHttpsRedirection();
             app.UseMvc();
             //TODO replace with service start
-//            GithubApiClientHelper
-//                .InitializeClient(); // TOdo replace with factory https://docs.microsoft.com/en-us/aspnet/core/fundamentals/http-requests?view=aspnetcore-2.2#consumption-patterns
+            //            GithubApiClientHelper
+            //                .InitializeClient(); // TOdo replace with factory https://docs.microsoft.com/en-us/aspnet/core/fundamentals/http-requests?view=aspnetcore-2.2#consumption-patterns
         }
     }
 }

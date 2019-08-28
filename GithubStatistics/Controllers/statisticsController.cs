@@ -1,11 +1,11 @@
-﻿using GithubStatistics.Services;
+﻿using GithubStatistics.Models;
+using GithubStatistics.Services;
 using GithubStatistics.Services.DataService;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Http.Results;
-using GithubStatistics.Models;
 using WebApplication1.Models;
 
 namespace GithubStatistics.Controllers

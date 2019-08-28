@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using GithubStatisticsCore.Models;
+using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
-using GithubStatisticsCore.Models;
 
 namespace GithubStatisticsCore.Services.GithubApi
 {
@@ -11,21 +11,23 @@ namespace GithubStatisticsCore.Services.GithubApi
         //TODO remove task or not? figure out async in c#
         Task<List<GithubProjectView>> GetGithubRepoViews(List<GithubProject> githubProjects);
     }
-    public class GithubApiRepoProcessor: IGithubApiRepoProcessor
+    public class GithubApiRepoProcessor : IGithubApiRepoProcessor
     {
-        private readonly IApiClientHelper _apiClientHelper;
-        public GithubApiRepoProcessor(IApiClientHelper apiClientHelper)
+        private readonly IHttpClientFactory _clientFactory;
+
+        public GithubApiRepoProcessor(IHttpClientFactory clientFactory)
         {
-            this._apiClientHelper = apiClientHelper;
+            _clientFactory = clientFactory;
         }
+
 
         public async Task<List<GithubProject>> GetGithubRepoInfo(string user = "jdevdain")
         {
+
+            var client = _clientFactory.CreateClient("Github");
             //Request 1
-
-
             HttpResponseMessage response =
-                await _apiClientHelper.GetAsync($"https://api.github.com/users/{user}/repos");
+                await client.GetAsync($"https://api.github.com/users/{user}/repos");
             List<GithubProject> githubProjects = null;
             if (response.IsSuccessStatusCode)
             {
@@ -43,6 +45,8 @@ namespace GithubStatisticsCore.Services.GithubApi
 
         public async Task<List<GithubProjectView>> GetGithubRepoViews(List<GithubProject> githubProjects)
         {
+            var client = _clientFactory.CreateClient("Github");
+
             //Dictionary<string, GithubProjectView> githubProjectViews = new Dictionary<string, GithubProjectView>();
             List<GithubProjectView> githubProjectViews = new List<GithubProjectView>();
             for (int i = 0; i < githubProjects.Count - 1; i++)
