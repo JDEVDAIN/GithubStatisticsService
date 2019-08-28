@@ -1,4 +1,6 @@
-﻿using GithubStatisticsCore.Models;
+﻿using System;
+using System.Net.Http.Headers;
+using GithubStatisticsCore.Models;
 using GithubStatisticsCore.Services.GithubApi;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -21,11 +23,20 @@ namespace GithubStatisticsCore
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);//todo??
+            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1); //todo??
             services.AddSingleton<IGithubApiRepoProcessor, GithubApiRepoProcessor>();
-            IApiClientHelper apiClientHelper = new GithubApiClientHelper();
-            apiClientHelper.InitializeClient();//TODO is this right? https://stackoverflow.com/questions/39005861/asp-net-core-initialize-singleton-after-configuring-di
-            services.AddSingleton<IApiClientHelper>(apiClientHelper);
+
+            services.AddHttpClient("Github", client =>
+                {
+                    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                    client.DefaultRequestHeaders.Add("User-agent", "github_repo_client");
+                    client.DefaultRequestHeaders.Authorization =
+                        new AuthenticationHeaderValue(
+                            "Basic", Convert.ToBase64String(
+                                System.Text.Encoding.ASCII.GetBytes(
+                                    $"Bot-dain:38907eec13052be99e1b06435ca76d6f3d084360"))); //TODO remove oauth from code?
+                }
+            );
 
             services.AddDbContext<GithubDbContext>(options =>
                 options.UseMySql(Configuration.GetConnectionString("GithubDbContext")));
@@ -45,10 +56,9 @@ namespace GithubStatisticsCore
 
             app.UseHttpsRedirection();
             app.UseMvc();
-             //TODO replace with service start
+            //TODO replace with service start
 //            GithubApiClientHelper
 //                .InitializeClient(); // TOdo replace with factory https://docs.microsoft.com/en-us/aspnet/core/fundamentals/http-requests?view=aspnetcore-2.2#consumption-patterns
-
         }
     }
 }
