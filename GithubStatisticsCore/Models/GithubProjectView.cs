@@ -8,7 +8,8 @@ namespace GithubStatisticsCore.Models
 {
     public class GithubProjectView //TODO split api model and database model. what are dtos exactly
     {
-        [Key] public string Name { get; set; }
+        [Key]
+        public string Name { get; set; }
         //        [JsonProperty("count")]
         //        public int Count { get; set; } //useless
         //        [JsonProperty("uniques")]

@@ -52,7 +52,7 @@ namespace GithubStatisticsCore.Services.GithubApi
             for (int i = 0; i < githubProjects.Count - 1; i++)
             {
                 HttpResponseMessage response =
-                    await GithubApiClientHelper.GithubClient.GetAsync(
+                    await client.GetAsync(
                         $"https://api.github.com/repos/jdevdain/{githubProjects[i].Name}/traffic/views");
                 System.Diagnostics.Debug.WriteLine(githubProjects[i].Name);
 

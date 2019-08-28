@@ -8,6 +8,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Net.Http.Headers;
+using GithubStatisticsCore.Services.DataService;
 
 namespace GithubStatisticsCore
 {
@@ -24,8 +25,8 @@ namespace GithubStatisticsCore
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1); //todo??
-            services.AddSingleton<IGithubApiRepoProcessor, GithubApiRepoProcessor>();
-
+            services.AddScoped<IGithubApiRepoProcessor, GithubApiRepoProcessor>();
+            services.AddScoped<IGithubDataService, GithubDataService>();
             services.AddHttpClient("Github", client =>
                 {
                     client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
@@ -39,7 +40,7 @@ namespace GithubStatisticsCore
             );
 
             services.AddDbContext<GithubDbContext>(options =>
-                options.UseMySql(Configuration.GetConnectionString("GithubDbContext")));
+                options.UseMySQL(Configuration.GetConnectionString("GithubDbContext")));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

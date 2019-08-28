@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore;
+﻿using GithubStatisticsCore.Models;
+using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 
 namespace GithubStatisticsCore
