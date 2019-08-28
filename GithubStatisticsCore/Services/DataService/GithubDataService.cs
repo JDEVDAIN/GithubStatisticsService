@@ -1,20 +1,27 @@
-﻿using GithubStatistics.Models;
-using System.Collections.Generic;
-using System.Data.Entity;
-using System.Data.Entity.Migrations;
+﻿using System.Collections.Generic;
 using System.Linq;
-using WebApplication1.Models;
+using GithubStatisticsCore.Models;
+using Microsoft.EntityFrameworkCore;
 
-
-namespace GithubStatistics.Services.DataService
+namespace GithubStatisticsCore.Services.DataService
 {
-    public class GithubDataService
+    public interface IGithubDataService
     {
-        private readonly GithubDbContext _context = new GithubDbContext();
+
+    }
+    public class GithubDataService:IGithubDataService
+    {
+        private readonly GithubDbContext _context;
+
+        public GithubDataService(GithubDbContext context) //dependency injection
+        {
+            _context = context;
+        }
 
 
         public void SaveGithubProject(GithubProject githubProject)
         {
+
             _context.GithubProjects.Add(githubProject);
             _context.SaveChangesAsync();
         }
@@ -65,7 +72,8 @@ namespace GithubStatistics.Services.DataService
 
         public void SaveOrUpdateGithubProjectView(GithubProjectView githubProjectView)
         {
-            _context.GithubProjectViews.AddOrUpdate(githubProjectView);
+            //_context.GithubProjectViews.AddOrUpdate(githubProjectView);
+            _context.GithubProjectViews.Update(githubProjectView); //TODO does it generate it?
             _context.SaveChangesAsync();
         }
 
@@ -108,7 +116,7 @@ namespace GithubStatistics.Services.DataService
             {
                 List<View> uniqueViewList = new List<View>();
                 bool first = true;
-               
+
                 foreach (View datebaseView in new List<View>(githubProjectView.Views)
                 ) //workaround needed else it will reference the original databaselist and if something gets deleted it will remove it from the list and make it impossible to run
                 {

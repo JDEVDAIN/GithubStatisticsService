@@ -1,22 +1,27 @@
-﻿using GithubStatistics.Services;
-using GithubStatistics.Services.DataService;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Web.Http;
-using System.Web.Http.Results;
-using GithubStatistics.Models;
-using WebApplication1.Models;
+using GithubStatisticsCore.Models;
+using GithubStatisticsCore.Services.DataService;
+using GithubStatisticsCore.Services.GithubApi;
+using Microsoft.AspNetCore.Mvc;
 
-namespace GithubStatistics.Controllers
+namespace GithubStatisticsCore.Controllers
 {
-    public class ValuesController : ApiController
+    public class GithubStatisticsController : Controller
     {
-        private readonly GithubApiRepoProcessor
-            _githubApiRepoProcessor =
-                new GithubApiRepoProcessor(); //TODO make request automated //TODO Dependency injection
+        private readonly IGithubApiRepoProcessor _githubApiRepoProcessor;//TODO make request automated //TODO make interface
 
-        private readonly GithubDataService _githubDataService = new GithubDataService();
+        private readonly IGithubDataService _githubDataService;
+
+        public GithubStatisticsController(IGithubApiRepoProcessor githubApiRepoProcessor, IGithubDataService githubDataService)
+        {
+            this._githubApiRepoProcessor = githubApiRepoProcessor;
+            this._githubDataService = githubDataService;
+        }
+
+
 
         //        public ValuesController(GithubApiRepoProcessor githubApiRepoProcessor)
         //        {
@@ -24,6 +29,8 @@ namespace GithubStatistics.Controllers
         //        }
         //private readonly GithubDbContext _context = new GithubDbContext();
         // GET api/values
+        [HttpGet]
+        [Route("Projects")]
         public async Task<List<GithubProject>> Get() //gets info to projects always needed
         {
             List<GithubProject> githubProjects = await _githubApiRepoProcessor.GetGithubRepoInfo("jdevdain");
@@ -33,6 +40,8 @@ namespace GithubStatistics.Controllers
         }
 
         // GET api/values/5
+        [HttpGet]
+        [Route("showViews")]
         public async Task<List<GithubProjectView>>
             Get(int id) //updated whole GithubProjectViews Table, only needed if there is a new project
         {
