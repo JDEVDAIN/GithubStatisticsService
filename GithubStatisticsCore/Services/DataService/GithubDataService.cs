@@ -13,6 +13,8 @@ namespace GithubStatisticsCore.Services.DataService
 
         void SaveGithubProjectView(GithubProjectView githubProjectView);
 
+        void UpdateGithubProjects(List<GithubProject> githubProjects);
+
         void SaveGithubProjectViews(List<GithubProjectView> githubProjectViews);
 
         void SaveOrUpdateGithubProjectView(GithubProjectView githubProjectView);
@@ -53,6 +55,19 @@ namespace GithubStatisticsCore.Services.DataService
             //_context.SaveChangesAsync();
             _context.SaveChanges();
         }
+
+        public void UpdateGithubProjects(List<GithubProject> githubProjects) //will not create projects
+        {
+            foreach (GithubProject githubProject in githubProjects)
+            {
+                _context.GithubProjects.Update(githubProject); //TODO check out AddRange
+
+            }
+
+            //_context.SaveChangesAsync();
+            _context.SaveChanges();
+        }
+
 
         public void SaveGithubProjectView(GithubProjectView githubProjectView)
         {

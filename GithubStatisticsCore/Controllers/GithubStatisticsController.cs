@@ -38,9 +38,19 @@ namespace GithubStatisticsCore.Controllers
             return githubProjects;
         }
 
+        [HttpGet]
+        [Route("updateProjects")]
+        public async Task<List<GithubProject>> UpdateProjectsGet() //gets info to projects always needed
+        {
+            List<GithubProject> githubProjects = await _githubApiRepoProcessor.GetGithubRepoInfo("jdevdain");
+            _githubDataService.UpdateGithubProjects(githubProjects);
+
+            return githubProjects;
+        }
+
         // GET api/values/5
         [HttpGet]
-        [Route("showViews")]
+        [Route("showViews")] //if called and database is empty it will create projects and views only thing missing is the totalof views
         public async Task<List<GithubProjectView>>
             Get(int id) //updated whole GithubProjectViews Table, only needed if there is a new project
         {
