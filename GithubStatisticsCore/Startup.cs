@@ -9,6 +9,8 @@ using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Net.Http.Headers;
 using GithubStatisticsCore.Services.DataService;
+using Hangfire;
+using Hangfire.MySql.Core;
 
 namespace GithubStatisticsCore
 {
@@ -25,6 +27,7 @@ namespace GithubStatisticsCore
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1); //todo??
+            //Dependency injection
             services.AddScoped<IGithubApiRepoProcessor, GithubApiRepoProcessor>();
             services.AddScoped<IGithubDataService, GithubDataService>();
             services.AddHttpClient("Github", client =>
@@ -38,9 +41,16 @@ namespace GithubStatisticsCore
                                     $"Bot-dain:38907eec13052be99e1b06435ca76d6f3d084360"))); //TODO remove oauth from code?
                 }
             );
-
+            //Database
             services.AddDbContext<GithubDbContext>(options =>
                 options.UseMySql(Configuration.GetConnectionString("GithubDbContext")));
+
+            //Hangfire
+            services.AddHangfire(configuration => configuration
+                .UseStorage(new MySqlStorage(Configuration.GetConnectionString("Hangfire"),
+                    new MySqlStorageOptions() {TablePrefix = "Hangfire"})));
+
+            services.AddHangfireServer();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -57,9 +67,9 @@ namespace GithubStatisticsCore
 
             app.UseHttpsRedirection();
             app.UseMvc();
-            //TODO replace with service start
-            //            GithubApiClientHelper
-            //                .InitializeClient(); // TOdo replace with factory https://docs.microsoft.com/en-us/aspnet/core/fundamentals/http-requests?view=aspnetcore-2.2#consumption-patterns
+
+            //Hangfire
+            app.UseHangfireDashboard();
         }
     }
 }
