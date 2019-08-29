@@ -27,7 +27,7 @@ namespace GithubStatisticsCore.Services.DataService
 
     public class GithubDataService : IGithubDataService
     {
-        private readonly GithubDbContext _context;
+        private readonly GithubDbContext _context; //cant use SaveChangesAsync with Pomelo MYSQL 2.2.0. Or it will not save it.
 
         public GithubDataService(GithubDbContext context) //dependency injection
         {
@@ -37,8 +37,9 @@ namespace GithubStatisticsCore.Services.DataService
 
         public void SaveGithubProject(GithubProject githubProject)
         {
+            
             _context.GithubProjects.Add(githubProject);
-            _context.SaveChangesAsync();
+            _context.SaveChanges();
         }
 
         public void SaveGithubProjects(List<GithubProject> githubProjects)
@@ -46,9 +47,11 @@ namespace GithubStatisticsCore.Services.DataService
             foreach (GithubProject githubProject in githubProjects)
             {
                 _context.GithubProjects.Add(githubProject); //TODO check out AddRange
+                
             }
 
-            _context.SaveChangesAsync();
+            //_context.SaveChangesAsync();
+            _context.SaveChanges();
         }
 
         public void SaveGithubProjectView(GithubProjectView githubProjectView)
@@ -57,7 +60,7 @@ namespace GithubStatisticsCore.Services.DataService
             if (!githubProjectViewsNames.Contains(githubProjectView.Name))
             {
                 _context.GithubProjectViews.Add(githubProjectView);
-                _context.SaveChangesAsync();
+                _context.SaveChanges();
             }
             else
             {
@@ -83,14 +86,14 @@ namespace GithubStatisticsCore.Services.DataService
                 }
             }
 
-            _context.SaveChangesAsync();
+            _context.SaveChanges();
         }
 
         public void SaveOrUpdateGithubProjectView(GithubProjectView githubProjectView)
         {
             //_context.GithubProjectViews.AddOrUpdate(githubProjectView);
             _context.GithubProjectViews.Update(githubProjectView); //TODO does it generate it?
-            _context.SaveChangesAsync();
+            _context.SaveChanges();
         }
 
         public List<string> GetGithubProjectViewsNames()
@@ -117,7 +120,7 @@ namespace GithubStatisticsCore.Services.DataService
                 }
             }
 
-            _context.SaveChangesAsync();
+            _context.SaveChanges();
         }
 
         public void RemoveDuplicatesInViews() //TODO improve
@@ -162,7 +165,7 @@ namespace GithubStatisticsCore.Services.DataService
                 }
             }
 
-            _context.SaveChangesAsync();
+            _context.SaveChanges();
         }
 
         public void RemoveDuplicatesInViewsAndUpdateTotal() //TODO improve
@@ -221,7 +224,7 @@ namespace GithubStatisticsCore.Services.DataService
                 //_context.Entry(githubProjectView).State = EntityState.Modified;
             }
 
-            _context.SaveChangesAsync();
+            _context.SaveChanges();
         }
     }
 }

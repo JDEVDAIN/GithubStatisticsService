@@ -9,14 +9,15 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GithubStatisticsCore.Migrations
 {
     [DbContext(typeof(GithubDbContext))]
-    [Migration("20190828180224_Github")]
-    partial class Github
+    [Migration("20190829095120_github")]
+    partial class github
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "2.2.6-servicing-10079");
+                .HasAnnotation("ProductVersion", "2.2.6-servicing-10079")
+                .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
             modelBuilder.Entity("GithubStatisticsCore.Models.GithubProject", b =>
                 {

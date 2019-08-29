@@ -40,7 +40,7 @@ namespace GithubStatisticsCore
             );
 
             services.AddDbContext<GithubDbContext>(options =>
-                options.UseMySQL(Configuration.GetConnectionString("GithubDbContext")));
+                options.UseMySql(Configuration.GetConnectionString("GithubDbContext")));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

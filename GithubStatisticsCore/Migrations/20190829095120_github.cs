@@ -1,9 +1,10 @@
 ﻿using System;
+using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace GithubStatisticsCore.Migrations
 {
-    public partial class Github : Migration
+    public partial class github : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -13,7 +14,7 @@ namespace GithubStatisticsCore.Migrations
                 {
                     Name = table.Column<string>(nullable: false),
                     Url = table.Column<string>(nullable: true),
-                    Fork = table.Column<short>(nullable: false),
+                    Fork = table.Column<bool>(nullable: false),
                     CreatedAt = table.Column<DateTime>(nullable: false),
                     UpdatedAt = table.Column<DateTime>(nullable: false),
                     Description = table.Column<string>(nullable: true),
@@ -50,7 +51,7 @@ namespace GithubStatisticsCore.Migrations
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
-                        .Annotation("MySQL:AutoIncrement", true),
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     Timestamp = table.Column<DateTime>(nullable: false),
                     Count = table.Column<int>(nullable: false),
                     Uniques = table.Column<int>(nullable: false),
