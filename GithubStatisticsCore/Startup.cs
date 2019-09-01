@@ -76,6 +76,8 @@ namespace GithubStatisticsCore
 
             //Hangfire
             app.UseHangfireDashboard();
+            //Hangfire Services
+            RecurringJob.AddOrUpdate("AddOrUpdateGithubProjects",()=>Console.WriteLine("test"),Cron.Daily);
         }
     }
 }

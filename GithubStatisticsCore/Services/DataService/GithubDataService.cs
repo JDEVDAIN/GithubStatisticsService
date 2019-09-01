@@ -20,6 +20,9 @@ namespace GithubStatisticsCore.Services.DataService
         void SaveOrUpdateGithubProjectView(GithubProjectView githubProjectView);
 
         List<string> GetGithubProjectViewsNames();
+
+        List<string> GetGithubProjectNames();
+
         void SaveViews(List<GithubProjectView> githubProjectViews);
 
         void RemoveDuplicatesInViews();
@@ -29,7 +32,8 @@ namespace GithubStatisticsCore.Services.DataService
 
     public class GithubDataService : IGithubDataService
     {
-        private readonly GithubDbContext _context; //cant use SaveChangesAsync with Pomelo MYSQL 2.2.0. Or it will not save it.
+        private readonly GithubDbContext
+            _context; //cant use SaveChangesAsync with Pomelo MYSQL 2.2.0. Or it will not save it.
 
         public GithubDataService(GithubDbContext context) //dependency injection
         {
@@ -39,7 +43,6 @@ namespace GithubStatisticsCore.Services.DataService
 
         public void SaveGithubProject(GithubProject githubProject)
         {
-            
             _context.GithubProjects.Add(githubProject);
             _context.SaveChanges();
         }
@@ -49,7 +52,6 @@ namespace GithubStatisticsCore.Services.DataService
             foreach (GithubProject githubProject in githubProjects)
             {
                 _context.GithubProjects.Add(githubProject); //TODO check out AddRange
-                
             }
 
             //_context.SaveChangesAsync();
@@ -61,7 +63,6 @@ namespace GithubStatisticsCore.Services.DataService
             foreach (GithubProject githubProject in githubProjects)
             {
                 _context.GithubProjects.Update(githubProject); //TODO check out AddRange
-
             }
 
             //_context.SaveChangesAsync();
@@ -113,12 +114,12 @@ namespace GithubStatisticsCore.Services.DataService
 
         public List<string> GetGithubProjectViewsNames()
         {
-            List<string> githubProjectViewsNameList;
-            githubProjectViewsNameList =
-                _context.GithubProjectViews.Select(p => p.Name).ToList(); //Linq expression to get all names 
+            return _context.GithubProjectViews.Select(p => p.Name).ToList();
+        }
 
-
-            return githubProjectViewsNameList;
+        public List<string> GetGithubProjectNames()
+        {
+            return _context.GithubProjects.Select(p => p.Name).ToList();
         }
 
         public void SaveViews(List<GithubProjectView> githubProjectViews)
@@ -145,7 +146,6 @@ namespace GithubStatisticsCore.Services.DataService
             //check for timestamp if its the same remove
             //if timestamp is not the same add the counts and uniques together and write to total in Githubprojectview
             List<GithubProjectView> githubProjectViews = _context.GithubProjectViews.Include(d => d.Views).ToList();
-            System.Diagnostics.Debug.WriteLine("Test");
             foreach (var githubProjectView in githubProjectViews)
             {
                 List<View> uniqueViewList = new List<View>();
@@ -174,9 +174,6 @@ namespace GithubStatisticsCore.Services.DataService
                             }
                         }
                     }
-
-                    System.Diagnostics.Debug.WriteLine(uniqueViewList.ToString());
-                    System.Diagnostics.Debug.WriteLine("\n");
                 }
             }
 
