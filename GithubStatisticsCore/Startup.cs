@@ -17,9 +17,13 @@ namespace GithubStatisticsCore
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
+        private readonly IBackgroundService _backgroundService;
+
+        public Startup(IConfiguration configuration, IBackgroundService backgroundService)
         {
             Configuration = configuration;
+            _backgroundService =
+                backgroundService; //dependency injection of backgroundService, for Hangfire in configuration 
         }
 
         public IConfiguration Configuration { get; }
@@ -27,6 +31,7 @@ namespace GithubStatisticsCore
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddScoped<IBackgroundService, BackgroundService>(); //TODO needed?
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1); //todo??
             //Dependency injection
             services.AddScoped<IGithubApiRepoProcessor, GithubApiRepoProcessor>();
@@ -54,9 +59,9 @@ namespace GithubStatisticsCore
             services.AddHangfireServer();
             //Hangfire usage
             //Dependency injection
-            services.AddScoped<IBackgroundService, BackgroundService>(); //TODO needed?
+         
 
-
+           // services.AddTransient<IBackgroundService, BackgroundService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -77,7 +82,8 @@ namespace GithubStatisticsCore
             //Hangfire
             app.UseHangfireDashboard();
             //Hangfire Services
-            RecurringJob.AddOrUpdate("AddOrUpdateGithubProjects",()=>Console.WriteLine("test"),Cron.Daily);
+
+            RecurringJob.AddOrUpdate("AddOrUpdateGithubProjects", () => _backgroundService.RunDemoTask(),Cron.Daily);
         }
     }
 }

@@ -42,16 +42,25 @@ namespace GithubStatisticsCore.Services.DataService
 
 
         public void SaveGithubProject(GithubProject githubProject)
-        {
+        {//TODO check if already existing
             _context.GithubProjects.Add(githubProject);
             _context.SaveChanges();
         }
 
         public void SaveGithubProjects(List<GithubProject> githubProjects)
         {
+            List<string> projectNames = GetGithubProjectNames();
+
             foreach (GithubProject githubProject in githubProjects)
             {
-                _context.GithubProjects.Add(githubProject); //TODO check out AddRange
+                if (!projectNames.Contains(githubProject.Name))
+                {
+                    _context.GithubProjects.Add(githubProject); //TODO check out AddRange }
+                }
+                else
+                {
+                    //TODO logging
+                }
             }
 
             //_context.SaveChangesAsync();
