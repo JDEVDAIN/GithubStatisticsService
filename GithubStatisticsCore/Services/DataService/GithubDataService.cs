@@ -22,6 +22,7 @@ namespace GithubStatisticsCore.Services.DataService
         List<string> GetGithubProjectViewsNames();
 
         List<string> GetGithubProjectNames();
+        List<GithubProject> GetGithubProjects();
 
         void SaveViews(List<GithubProjectView> githubProjectViews);
 
@@ -125,6 +126,11 @@ namespace GithubStatisticsCore.Services.DataService
         {
             return _context.GithubProjectViews.Select(p => p.Name).ToList();
         }
+        public List<GithubProject> GetGithubProjects()
+        {
+            return _context.GithubProjects.ToList();
+        }
+
 
         public List<string> GetGithubProjectNames()
         {

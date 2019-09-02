@@ -17,13 +17,11 @@ namespace GithubStatisticsCore
 {
     public class Startup
     {
-        private readonly IBackgroundService _backgroundService;
+       
 
-        public Startup(IConfiguration configuration, IBackgroundService backgroundService)
+        public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
-            _backgroundService =
-                backgroundService; //dependency injection of backgroundService, for Hangfire in configuration 
         }
 
         public IConfiguration Configuration { get; }
@@ -31,11 +29,11 @@ namespace GithubStatisticsCore
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddScoped<IBackgroundService, BackgroundService>(); //TODO needed?
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1); //todo??
+
+            services.AddMvc(); //todo??
             //Dependency injection
-            services.AddScoped<IGithubApiRepoProcessor, GithubApiRepoProcessor>();
-            services.AddScoped<IGithubDataService, GithubDataService>();
+            services.AddSingleton<IGithubApiRepoProcessor, GithubApiRepoProcessor>();
+            services.AddTransient<IGithubDataService, GithubDataService>();
             services.AddHttpClient("Github", client =>
                 {
                     client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
@@ -57,12 +55,7 @@ namespace GithubStatisticsCore
                     new MySqlStorageOptions() {TablePrefix = "Hangfire"})));
 
             services.AddHangfireServer();
-            //Hangfire usage
-            //Dependency injection
-         
-
-           // services.AddTransient<IBackgroundService, BackgroundService>();
-        }
+            }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
@@ -81,9 +74,10 @@ namespace GithubStatisticsCore
 
             //Hangfire
             app.UseHangfireDashboard();
-            //Hangfire Services
-
-            RecurringJob.AddOrUpdate("AddOrUpdateGithubProjects", () => _backgroundService.RunDemoTask(),Cron.Daily);
+            //Hangfire Jobs
+            RecurringJob.AddOrUpdate<GithubService>("AddOrUpdateGithubProjects",gS =>gS.AddNewProjectsAndUpdateExisting(), "5 2 * * *");
+            RecurringJob.AddOrUpdate<GithubService>("SaveViews", gS => gS.SaveViews(), "20 2 * * *");
+            RecurringJob.AddOrUpdate<GithubService>("RemoveDuplicatesAndCalculateTotalViews", gS => gS.RemoveDuplicatesAndCalculateTotalViews(), "31 2 * * *");
         }
     }
 }
