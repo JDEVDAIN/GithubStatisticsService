@@ -166,28 +166,28 @@ namespace GithubStatisticsCore.Services.DataService
                 List<View> uniqueViewList = new List<View>();
                 bool first = true;
 
-                foreach (View datebaseView in new List<View>(githubProjectView.Views)
+                foreach (View databaseView in new List<View>(githubProjectView.Views)
                 ) //workaround needed else it will reference the original databaselist and if something gets deleted it will remove it from the list and make it impossible to run
                 {
                     if (first)
                     {
-                        uniqueViewList.Add(datebaseView);
+                        uniqueViewList.Add(databaseView);
                         first = false;
                     }
                     else
                     {
+                        bool isDuplicate = false;
                         foreach (View uniqueView in new List<View>(uniqueViewList)
                         ) //workaround needed else it will reference the original databaselist and if something gets deleted it will remove it from the list and make it impossible to run
                         {
-                            if (uniqueView.Timestamp.CompareTo(datebaseView.Timestamp) != 0) //not a duplicate
+                            if (uniqueView.Timestamp.CompareTo(databaseView.Timestamp) == 0) //is a duplicate
                             {
-                                uniqueViewList.Add(datebaseView);
-                            }
-                            else
-                            {
-                                _context.Entry(datebaseView).State = EntityState.Deleted;
+                                isDuplicate = true;
+                                _context.Entry(databaseView).State = EntityState.Deleted;
+
                             }
                         }
+                        if (isDuplicate == false) { uniqueViewList.Add(databaseView); }
                     }
                 }
             }
@@ -195,7 +195,7 @@ namespace GithubStatisticsCore.Services.DataService
             _context.SaveChanges();
         }
 
-        public void RemoveDuplicatesInViewsAndUpdateTotal() //TODO improve
+        public void RemoveDuplicatesInViewsAndUpdateTotal() //TODO improve 
         {
             //get all views
             //if views have same GithubProjectView_Name (Query with Name?)
@@ -219,18 +219,18 @@ namespace GithubStatisticsCore.Services.DataService
                     }
                     else
                     {
+                        bool isDuplicate = false;
                         foreach (View uniqueView in new List<View>(uniqueViewList)
                         ) //workaround needed else it will reference the original databaselist and if something gets deleted it will remove it from the list and make it impossible to run
                         {
-                            if (uniqueView.Timestamp.CompareTo(databaseView.Timestamp) != 0) //not a duplicate
+                            if (uniqueView.Timestamp.CompareTo(databaseView.Timestamp) == 0) //is a duplicate
                             {
-                                uniqueViewList.Add(databaseView);
-                            }
-                            else
-                            {
+                                isDuplicate = true;
                                 _context.Entry(databaseView).State = EntityState.Deleted;
+                               
                             }
                         }
+                        if (isDuplicate == false) { uniqueViewList.Add(databaseView);}
                     }
 
                     System.Diagnostics.Debug.WriteLine(uniqueViewList.ToString());
