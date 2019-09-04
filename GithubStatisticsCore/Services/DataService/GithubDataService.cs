@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace GithubStatisticsCore.Services.DataService
 {
@@ -29,6 +30,8 @@ namespace GithubStatisticsCore.Services.DataService
         void RemoveDuplicatesInViews();
 
         void RemoveDuplicatesInViewsAndUpdateTotal();
+
+        Task<List<View>> GetViews();
     }
 
     public class GithubDataService : IGithubDataService
@@ -46,6 +49,18 @@ namespace GithubStatisticsCore.Services.DataService
         {//TODO check if already existing
             _context.GithubProjects.Add(githubProject);
             _context.SaveChanges();
+        }
+
+        public async Task<List<View>> GetViews()
+        {
+            List<View> viewList = new List<View>();
+            List<GithubProjectView> databaseGithubProjectViews =
+                _context.GithubProjectViews.Include(d => d.Views).ToList();
+            foreach (GithubProjectView githubProjectView in databaseGithubProjectViews)
+            {//issue it adds the whole githubProjectView model not just the name of it which is the issue //TODO
+                viewList.AddRange(githubProjectView.Views);
+            }
+            return viewList;
         }
 
         public void SaveGithubProjects(List<GithubProject> githubProjects)

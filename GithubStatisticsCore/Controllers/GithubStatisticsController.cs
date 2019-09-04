@@ -8,12 +8,13 @@ using System.Threading.Tasks;
 
 namespace GithubStatisticsCore.Controllers
 {
+    [ApiController]
     public class GithubStatisticsController : Controller
     {
         private readonly IGithubApiRepoProcessor _githubApiRepoProcessor;//TODO make request automated //TODO make interface
 
         private readonly IGithubDataService _githubDataService;
-
+        
         public GithubStatisticsController(IGithubApiRepoProcessor githubApiRepoProcessor, IGithubDataService githubDataService)
         {
             this._githubApiRepoProcessor = githubApiRepoProcessor;
