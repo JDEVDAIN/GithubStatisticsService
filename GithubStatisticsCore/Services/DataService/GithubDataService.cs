@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using GithubStatisticsCore.Models.DTO;
 
 namespace GithubStatisticsCore.Services.DataService
 {
@@ -31,7 +32,9 @@ namespace GithubStatisticsCore.Services.DataService
 
         void RemoveDuplicatesInViewsAndUpdateTotal();
 
-        Task<List<View>> GetViews();
+        Task<List<ViewDto>> GetViews();
+
+        Task<List<ViewDto>> GetView(string name);
     }
 
     public class GithubDataService : IGithubDataService
@@ -46,22 +49,59 @@ namespace GithubStatisticsCore.Services.DataService
 
 
         public void SaveGithubProject(GithubProject githubProject)
-        {//TODO check if already existing
+        {
+            //TODO check if already existing
             _context.GithubProjects.Add(githubProject);
             _context.SaveChanges();
         }
 
-        public async Task<List<View>> GetViews()
+        public async Task<List<ViewDto>> GetViews()
         {
-            List<View> viewList = new List<View>();
-            List<GithubProjectView> databaseGithubProjectViews =
+            List<ViewDto> viewList = new List<ViewDto>();
+            List<GithubProjectView> databaseGithubProjectViews = 
                 _context.GithubProjectViews.Include(d => d.Views).ToList();
             foreach (GithubProjectView githubProjectView in databaseGithubProjectViews)
-            {//issue it adds the whole githubProjectView model not just the name of it which is the issue //TODO
-                viewList.AddRange(githubProjectView.Views);
+            {
+                //issue it adds the whole githubProjectView model not just the name of it which is the issue //TODO
+                foreach (View view in githubProjectView.Views)
+                {
+                    viewList.Add(new ViewDto()
+                    {
+                        Count = view.Count,
+                        GithubProjectViewName = githubProjectView.Name,
+                        Timestamp = view.Timestamp,
+                        Id = view.Id, Uniques = view.Uniques
+                    });
+                }
             }
+
             return viewList;
         }
+
+        public async Task<List<ViewDto>> GetView(string name)
+        {
+            List<ViewDto> viewList = new List<ViewDto>();
+            List<GithubProjectView> databaseGithubProjectViews =
+                _context.GithubProjectViews.Where(x=>x.Name == name).Include(d => d.Views).ToList();
+            foreach (GithubProjectView githubProjectView in databaseGithubProjectViews)
+            {
+                //issue it adds the whole githubProjectView model not just the name of it which is the issue //TODO
+                foreach (View view in githubProjectView.Views)
+                {
+                    viewList.Add(new ViewDto()
+                    {
+                        Count = view.Count,
+                        GithubProjectViewName = githubProjectView.Name,
+                        Timestamp = view.Timestamp,
+                        Id = view.Id,
+                        Uniques = view.Uniques
+                    });
+                }
+            }
+
+            return viewList;
+        }
+
 
         public void SaveGithubProjects(List<GithubProject> githubProjects)
         {
@@ -141,6 +181,7 @@ namespace GithubStatisticsCore.Services.DataService
         {
             return _context.GithubProjectViews.Select(p => p.Name).ToList();
         }
+
         public List<GithubProject> GetGithubProjects()
         {
             return _context.GithubProjects.ToList();
@@ -199,10 +240,13 @@ namespace GithubStatisticsCore.Services.DataService
                             {
                                 isDuplicate = true;
                                 _context.Entry(databaseView).State = EntityState.Deleted;
-
                             }
                         }
-                        if (isDuplicate == false) { uniqueViewList.Add(databaseView); }
+
+                        if (isDuplicate == false)
+                        {
+                            uniqueViewList.Add(databaseView);
+                        }
                     }
                 }
             }
@@ -242,10 +286,13 @@ namespace GithubStatisticsCore.Services.DataService
                             {
                                 isDuplicate = true;
                                 _context.Entry(databaseView).State = EntityState.Deleted;
-                               
                             }
                         }
-                        if (isDuplicate == false) { uniqueViewList.Add(databaseView);}
+
+                        if (isDuplicate == false)
+                        {
+                            uniqueViewList.Add(databaseView);
+                        }
                     }
 
                     System.Diagnostics.Debug.WriteLine(uniqueViewList.ToString());

@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using GithubStatisticsCore.Models;
+using GithubStatisticsCore.Models.DTO;
 using GithubStatisticsCore.Services.DataService;
 
 namespace GithubStatisticsCore.Controllers
@@ -26,18 +27,18 @@ namespace GithubStatisticsCore.Controllers
 
         // GET: api/GithubProjectViews
         [HttpGet]
-        public async Task<ActionResult<List<View>>> GetViews()
+        public async Task<ActionResult<List<ViewDto>>> GetViews()
         {
             return await _githubDataService.GetViews();
         }
 
-        // GET: api/GithubProjectViews/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<GithubProjectView>> GetGithubProjectView(string id)
+        // GET: api/GithubProjectViews/nameOfProject
+        [HttpGet("{name}")]
+        public async Task<ActionResult<List<ViewDto>>> GetGithubView(string name)
         {
-            var githubProjectView = await _context.GithubProjectViews.FindAsync(id);
+            var githubProjectView = await _githubDataService.GetView(name);
 
-            if (githubProjectView == null)
+            if (githubProjectView == null || githubProjectView.Count == 0)
             {
                 return NotFound();
             }

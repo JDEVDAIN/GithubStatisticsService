@@ -27,7 +27,7 @@ namespace GithubStatisticsCore.Controllers
             return await _context.GithubProjects.ToListAsync();
         }
 
-        // GET: api/GithubProjects/5
+        // GET: api/GithubProjects/nameOfProject
         [HttpGet("{name}")]
         public async Task<ActionResult<GithubProject>> GetGithubProject(string name)
         {
