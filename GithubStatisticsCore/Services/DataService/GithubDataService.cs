@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using GithubStatisticsCore.Models.DTO;
+using Microsoft.Extensions.Logging;
 
 namespace GithubStatisticsCore.Services.DataService
 {
@@ -19,7 +20,7 @@ namespace GithubStatisticsCore.Services.DataService
 
         void SaveGithubProjectViews(List<GithubProjectView> githubProjectViews);
 
-        void SaveOrUpdateGithubProjectView(GithubProjectView githubProjectView);
+        void UpdateGithubProjectView(GithubProjectView githubProjectView);
 
         List<string> GetGithubProjectViewsNames();
 
@@ -42,9 +43,13 @@ namespace GithubStatisticsCore.Services.DataService
         private readonly GithubDbContext
             _context; //cant use SaveChangesAsync with Pomelo MYSQL 2.2.0. Or it will not save it.
 
-        public GithubDataService(GithubDbContext context) //dependency injection
+        private readonly ILogger _logger;
+
+
+        public GithubDataService(GithubDbContext context, ILogger<GithubDataService> logger) //dependency injection
         {
             _context = context;
+            _logger = logger;
         }
 
 
@@ -115,7 +120,7 @@ namespace GithubStatisticsCore.Services.DataService
                 }
                 else
                 {
-                    //TODO logging
+                    _logger.LogWarning($"Could not Save Project {githubProject.Name}, already existing");
                 }
             }
 
@@ -145,7 +150,7 @@ namespace GithubStatisticsCore.Services.DataService
             }
             else
             {
-                //log already exists TODO
+                _logger.LogWarning($"Could not Save Project {githubProjectView.Name}, already existing");
             }
 
             //todo make sure it doesnt already exist else exception, maybe make catch exception or check first
@@ -163,17 +168,17 @@ namespace GithubStatisticsCore.Services.DataService
                 }
                 else
                 {
-                    //TODO log
+                    _logger.LogWarning($"Could not Save Project {githubProjectView.Name}, already existing");
                 }
             }
 
             _context.SaveChanges();
         }
 
-        public void SaveOrUpdateGithubProjectView(GithubProjectView githubProjectView)
+        public void UpdateGithubProjectView(GithubProjectView githubProjectView)
         {
-            //_context.GithubProjectViews.AddOrUpdate(githubProjectView);
-            _context.GithubProjectViews.Update(githubProjectView); //TODO does it generate it?
+            //_context.GithubProjectViews.AddOrUpdate(githubProjectView); //not existing in aspnet core 2.2 yet
+            _context.GithubProjectViews.Update(githubProjectView); // does not generate missing 
             _context.SaveChanges();
         }
 
@@ -240,6 +245,8 @@ namespace GithubStatisticsCore.Services.DataService
                             {
                                 isDuplicate = true;
                                 _context.Entry(databaseView).State = EntityState.Deleted;
+                                _logger.LogInformation($"Removed Duplicate {databaseView.Id}: {databaseView.GithubProjectView}: {databaseView.Timestamp} ");
+
                             }
                         }
 
@@ -286,6 +293,7 @@ namespace GithubStatisticsCore.Services.DataService
                             {
                                 isDuplicate = true;
                                 _context.Entry(databaseView).State = EntityState.Deleted;
+                                _logger.LogInformation($"Removed Duplicate {databaseView.Id}: {databaseView.GithubProjectView}: {databaseView.Timestamp} ");
                             }
                         }
 
@@ -294,9 +302,6 @@ namespace GithubStatisticsCore.Services.DataService
                             uniqueViewList.Add(databaseView);
                         }
                     }
-
-                    System.Diagnostics.Debug.WriteLine(uniqueViewList.ToString());
-                    System.Diagnostics.Debug.WriteLine("\n");
                 }
 
                 //calculate total
