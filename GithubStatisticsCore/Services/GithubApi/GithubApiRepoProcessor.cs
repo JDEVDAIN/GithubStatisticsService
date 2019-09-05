@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 
 namespace GithubStatisticsCore.Services.GithubApi
 {
@@ -15,9 +16,12 @@ namespace GithubStatisticsCore.Services.GithubApi
     {
         private readonly IHttpClientFactory _clientFactory;
 
-        public GithubApiRepoProcessor(IHttpClientFactory clientFactory)
+        private readonly ILogger _logger;
+
+        public GithubApiRepoProcessor(IHttpClientFactory clientFactory, ILogger<GithubApiRepoProcessor> logger)
         {
             _clientFactory = clientFactory;
+            _logger = logger;
         }
 
 
@@ -31,11 +35,12 @@ namespace GithubStatisticsCore.Services.GithubApi
             List<GithubProject> githubProjects = null;
             if (response.IsSuccessStatusCode)
             {
+                _logger.LogDebug($"{response.StatusCode}: {response.RequestMessage} ");
                 githubProjects = await response.Content.ReadAsAsync<List<GithubProject>>();
             }
             else
             {
-                System.Diagnostics.Debug.WriteLine(response.ReasonPhrase);
+                _logger.LogError($"{response.StatusCode}: {response.RequestMessage} ");
             }
 
 
@@ -54,26 +59,18 @@ namespace GithubStatisticsCore.Services.GithubApi
                 HttpResponseMessage response =
                     await client.GetAsync(
                         $"https://api.github.com/repos/jdevdain/{githubProjects[i].Name}/traffic/views");
-                System.Diagnostics.Debug.WriteLine(githubProjects[i].Name);
+                
 
                 if (response.IsSuccessStatusCode)
                 {
-                    System.Diagnostics.Debug.WriteLine(response.Content);
-                    //                    githubProjectViews.Add(githubProjects[i].Name,
-                    //                        await response.Content.ReadAsAsync<GithubProjectView>());
-                    //                    GithubProjectView githubProjectView = new GithubProjectView()
-                    //                    {
-                    //                        Name=githubProjects[i].Name
-                    //
-                    //                    };
+                    _logger.LogDebug($"{response.StatusCode}: {response.RequestMessage} ");
                     GithubProjectView githubProjectView = await response.Content.ReadAsAsync<GithubProjectView>();
                     githubProjectView.Name = githubProjects[i].Name;
                     githubProjectViews.Add(githubProjectView);
                 }
                 else
                 {
-                    System.Diagnostics.Debug.WriteLine(response.ReasonPhrase);
-                    //Console.WriteLine(response.ReasonPhrase);
+                    _logger.LogError($"{response.StatusCode}: {response.RequestMessage} ");
                 }
             }
 

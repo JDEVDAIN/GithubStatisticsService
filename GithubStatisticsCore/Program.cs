@@ -22,7 +22,7 @@ namespace GithubStatisticsCore
                     logging.AddConfiguration(hostingContext.Configuration.GetSection("Logging"));
                     logging.AddConsole();
                     logging.AddDebug();
-                    logging.AddEventSourceLogger();
+                    logging.AddEventSourceLogger(); //todo what does eventsourcelogger do
                 })
                 .UseStartup<Startup>();
     }
